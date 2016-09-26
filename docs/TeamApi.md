@@ -1,6 +1,6 @@
 # \TeamApi
 
-All URIs are relative to *http://127.0.0.1:8080/api/v1*
+All URIs are relative to *http://app.sendx.io/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -16,7 +16,7 @@ Method | HTTP request | Description
 
 
 # **TeamGet**
-> InlineResponse20012 TeamGet($apiKey)
+> InlineResponse20013 TeamGet($apiKey)
 
 Get information about all teams
 
@@ -31,7 +31,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**InlineResponse20012**](inline_response_200_12.md)
+[**InlineResponse20013**](inline_response_200_13.md)
 
 ### Authorization
 
@@ -45,7 +45,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **TeamPost**
-> InlineResponse20013 TeamPost($apiKey, $body)
+> InlineResponse20014 TeamPost($apiKey, $body)
 
 Add a new team
 
@@ -61,7 +61,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**InlineResponse20013**](inline_response_200_13.md)
+[**InlineResponse20014**](inline_response_200_14.md)
 
 ### Authorization
 

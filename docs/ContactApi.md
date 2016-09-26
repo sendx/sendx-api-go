@@ -1,15 +1,78 @@
 # \ContactApi
 
-All URIs are relative to *http://127.0.0.1:8080/api/v1*
+All URIs are relative to *http://app.sendx.io/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**ContactBulkPost**](ContactApi.md#ContactBulkPost) | **Post** /contact/bulk | Add a bulk of contacts in a request
+[**ContactContactIdCustomfieldPost**](ContactApi.md#ContactContactIdCustomfieldPost) | **Post** /contact/{contactId}/customfield | Add Customfield data for a contact
 [**ContactContactIdDelete**](ContactApi.md#ContactContactIdDelete) | **Delete** /contact/{contactId} | Deletes a contact
 [**ContactContactIdGet**](ContactApi.md#ContactContactIdGet) | **Get** /contact/{contactId} | Find contact by ID
 [**ContactContactIdPut**](ContactApi.md#ContactContactIdPut) | **Put** /contact/{contactId} | Update a contact by ID
 [**ContactGet**](ContactApi.md#ContactGet) | **Get** /contact | Get information about all contacts
 [**ContactPost**](ContactApi.md#ContactPost) | **Post** /contact | Add a new contact
 
+
+# **ContactBulkPost**
+> ContactBulkPost($apiKey, $body)
+
+Add a bulk of contacts in a request
+
+
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **apiKey** | **string**|  | 
+ **body** | [**BulkContact**](BulkContact.md)| All contacts which need to be added | 
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **ContactContactIdCustomfieldPost**
+> InlineResponse2005 ContactContactIdCustomfieldPost($apiKey, $contactId, $body)
+
+Add Customfield data for a contact
+
+
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **apiKey** | **string**|  | 
+ **contactId** | **int64**| ID of contact that needs to be fetched | 
+ **body** | [**ContactCustomfield**](ContactCustomfield.md)| Contact object that needs to be added | 
+
+### Return type
+
+[**InlineResponse2005**](inline_response_200_5.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **ContactContactIdDelete**
 > ContactContactIdDelete($apiKey, $contactId)

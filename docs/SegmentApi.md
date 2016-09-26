@@ -1,16 +1,16 @@
-# \SendApi
+# \SegmentApi
 
-All URIs are relative to *http://127.0.0.1:8080/api/v1*
+All URIs are relative to *http://app.sendx.io/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**SendEmailPost**](SendApi.md#SendEmailPost) | **Post** /send/email | Send transactional email to user
+[**SegmentGet**](SegmentApi.md#SegmentGet) | **Get** /segment | Get information about all segments
 
 
-# **SendEmailPost**
-> SendEmailPost($apiKey, $body)
+# **SegmentGet**
+> InlineResponse20016 SegmentGet($apiKey)
 
-Send transactional email to user
+Get information about all segments
 
 
 
@@ -20,11 +20,10 @@ Send transactional email to user
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **apiKey** | **string**|  | 
- **body** | [**EMessage**](EMessage.md)| EMessage object that needs to be added | 
 
 ### Return type
 
-void (empty response body)
+[**InlineResponse20016**](inline_response_200_16.md)
 
 ### Authorization
 

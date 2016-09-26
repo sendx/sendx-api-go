@@ -1,7 +1,7 @@
 /* 
  * SendX API
  *
- * SendX is built on the simple tenet that users must have open access to their data. SendX API is the first step in that direction. To cite some examples:   - subscribe / unsubscribe a contact from a list   - Schedule campaign to a segment of users   - Trigger transactional emails   - Get / PUT / POST and DELETE operations on team, campaign, list, contact, report etc. and so on.  As companies grow big, custom use cases around email marketing also crop up. SendX API ensures   that SendX platform is able to satisfy such unforeseen use cases. They may range from building     custom reporting dashboard to tagging contacts with custom attributes or triggering emails based on recommendation algorithm.  We do our best to have all our URLs be [RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer). Every endpoint (URL) may support one of four different http verbs. GET requests fetch information about an object, POST requests create objects, PUT requests update objects, and finally DELETE requests will delete objects.  Also all API calls besides:   - Subscribe / unsubscribe signup form  required **api_key** to be passed as **header**   ### The Envelope Every response is contained by an envelope. That is, each response has a predictable set of keys with which you can expect to interact: ```json {     \"status\": \"200\",      \"message\": \"OK\",     \"data\"\": [        {          ...        },        .        .        .     ] } ```  #### Status  The status key is used to communicate extra information about the response to the developer. If all goes well, you'll only ever see a code key with value 200. However, sometimes things go wrong, and in that case you might see a response like: ```json {     \"status\": \"404\" } ```  #### Data  The data key is the meat of the response. It may be a list containing single object or multiple objects  #### Message  This returns back human readable message. This is specially useful to make sense in case of error scenarios. 
+ * SendX is built on the simple tenet that users must have open access to their data. SendX API is the first step in that direction. To cite some examples:   - subscribe / unsubscribe a contact from a list   - Schedule campaign to a segment of users   - Trigger transactional emails   - Get / PUT / POST and DELETE operations on team, campaign, list, contact, report etc. and so on.  As companies grow big, custom use cases around email marketing also crop up. SendX API ensures that SendX platform is able to satisfy such unforeseen use cases. They may range from building custom reporting dashboard to tagging contacts with custom attributes or triggering emails based on recommendation algorithm.  We do our best to have all our URLs be [RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer). Every endpoint (URL) may support one of four different http verbs. GET requests fetch information about an object, POST requests create objects, PUT requests update objects, and finally DELETE requests will delete objects.  Also all API calls besides:   - Subscribe / unsubscribe signup form required **api_key** to be passed as **header**   ### The Envelope Every response is contained by an envelope. That is, each response has a predictable set of keys with which you can expect to interact: ```json {     \"status\": \"200\",     \"message\": \"OK\",     \"data\"\": [        {          ...        },        .        .        .     ] } ```  #### Status The status key is used to communicate extra information about the response to the developer. If all goes well, you'll only ever see a code key with value 200. However, sometimes things go wrong, and in that case you might see a response like: ```json {     \"status\": \"404\" } ```  #### Data The data key is the meat of the response. It may be a list containing single object or multiple objects  #### Message This returns back human readable message. This is specially useful to make sense in case of error scenarios. 
  *
  * OpenAPI spec version: v1
  * 
@@ -54,9 +54,9 @@ func NewListApiWithBasePath(basePath string) *ListApi {
  * 
  *
  * @param apiKey 
- * @return *InlineResponse2007
+ * @return *InlineResponse2008
  */
-func (a ListApi) ListGet(apiKey string) (*InlineResponse2007, *APIResponse, error) {
+func (a ListApi) ListGet(apiKey string) (*InlineResponse2008, *APIResponse, error) {
 
 	var httpMethod = "Get"
 	// create path and map variables
@@ -97,7 +97,133 @@ func (a ListApi) ListGet(apiKey string) (*InlineResponse2007, *APIResponse, erro
 	// header params "api_key"
 	headerParams["api_key"] = apiKey
 
-	var successPayload = new(InlineResponse2007)
+	var successPayload = new(InlineResponse2008)
+	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
+	if err != nil {
+		return successPayload, NewAPIResponse(httpResponse.RawResponse), err
+	}
+	err = json.Unmarshal(httpResponse.Body(), &successPayload)
+	return successPayload, NewAPIResponse(httpResponse.RawResponse), err
+}
+
+/**
+ * Remove a contact from a list
+ * 
+ *
+ * @param apiKey 
+ * @param listId ID of list for which contact needs to be remove
+ * @param body Contact email and team id
+ * @return void
+ */
+func (a ListApi) ListListIdContactDelete(apiKey string, listId int64, body ListContact) (*APIResponse, error) {
+
+	var httpMethod = "Delete"
+	// create path and map variables
+	path := a.Configuration.BasePath + "/list/{listId}/contact"
+	path = strings.Replace(path, "{"+"listId"+"}", fmt.Sprintf("%v", listId), -1)
+
+
+	headerParams := make(map[string]string)
+	queryParams := url.Values{}
+	formParams := make(map[string]string)
+	var postBody interface{}
+	var fileName string
+	var fileBytes []byte
+	// add default headers if any
+	for key := range a.Configuration.DefaultHeader {
+		headerParams[key] = a.Configuration.DefaultHeader[key]
+	}
+
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{ "application/json",  }
+
+	// set Content-Type header
+	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		headerParams["Content-Type"] = localVarHttpContentType
+	}
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{
+		"application/json",
+	}
+
+	// set Accept header
+	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		headerParams["Accept"] = localVarHttpHeaderAccept
+	}
+
+	// header params "api_key"
+	headerParams["api_key"] = apiKey
+
+	// body params
+	postBody = &body
+
+
+	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
+	if err != nil {
+		return NewAPIResponse(httpResponse.RawResponse), err
+	}
+
+	return NewAPIResponse(httpResponse.RawResponse), err
+}
+
+/**
+ * Add a contact to a list
+ * 
+ *
+ * @param apiKey 
+ * @param listId ID of list for which the contact needs to be added
+ * @param body Contact email and team id
+ * @return *InlineResponse20015
+ */
+func (a ListApi) ListListIdContactPost(apiKey string, listId int64, body ListContact) (*InlineResponse20015, *APIResponse, error) {
+
+	var httpMethod = "Post"
+	// create path and map variables
+	path := a.Configuration.BasePath + "/list/{listId}/contact"
+	path = strings.Replace(path, "{"+"listId"+"}", fmt.Sprintf("%v", listId), -1)
+
+
+	headerParams := make(map[string]string)
+	queryParams := url.Values{}
+	formParams := make(map[string]string)
+	var postBody interface{}
+	var fileName string
+	var fileBytes []byte
+	// add default headers if any
+	for key := range a.Configuration.DefaultHeader {
+		headerParams[key] = a.Configuration.DefaultHeader[key]
+	}
+
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{ "application/json",  }
+
+	// set Content-Type header
+	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		headerParams["Content-Type"] = localVarHttpContentType
+	}
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{
+		"application/json",
+	}
+
+	// set Accept header
+	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		headerParams["Accept"] = localVarHttpHeaderAccept
+	}
+
+	// header params "api_key"
+	headerParams["api_key"] = apiKey
+
+	// body params
+	postBody = &body
+
+	var successPayload = new(InlineResponse20015)
 	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
 	if err != nil {
 		return successPayload, NewAPIResponse(httpResponse.RawResponse), err
@@ -356,13 +482,13 @@ func (a ListApi) ListListIdPut(apiKey string, listId int64, body ListAddUpdate) 
 
 /**
  * Add a new list
- * 
+ * Adding a new list with all the fields. List type can be 0 - Single OptIn 1 - Double OptIn
  *
  * @param apiKey 
  * @param body List object that needs to be added
- * @return *InlineResponse2008
+ * @return *InlineResponse2009
  */
-func (a ListApi) ListPost(apiKey string, body ListAddUpdate) (*InlineResponse2008, *APIResponse, error) {
+func (a ListApi) ListPost(apiKey string, body ListAddUpdate) (*InlineResponse2009, *APIResponse, error) {
 
 	var httpMethod = "Post"
 	// create path and map variables
@@ -406,7 +532,7 @@ func (a ListApi) ListPost(apiKey string, body ListAddUpdate) (*InlineResponse200
 	// body params
 	postBody = &body
 
-	var successPayload = new(InlineResponse2008)
+	var successPayload = new(InlineResponse2009)
 	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
 	if err != nil {
 		return successPayload, NewAPIResponse(httpResponse.RawResponse), err

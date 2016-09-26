@@ -1,10 +1,12 @@
 # \ListApi
 
-All URIs are relative to *http://127.0.0.1:8080/api/v1*
+All URIs are relative to *http://app.sendx.io/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**ListGet**](ListApi.md#ListGet) | **Get** /list | Get information about all lists
+[**ListListIdContactDelete**](ListApi.md#ListListIdContactDelete) | **Delete** /list/{listId}/contact | Remove a contact from a list
+[**ListListIdContactPost**](ListApi.md#ListListIdContactPost) | **Post** /list/{listId}/contact | Add a contact to a list
 [**ListListIdContactsGet**](ListApi.md#ListListIdContactsGet) | **Get** /list/{listId}/contacts | Find contacts belonging to a list
 [**ListListIdDelete**](ListApi.md#ListListIdDelete) | **Delete** /list/{listId} | Deletes a list
 [**ListListIdGet**](ListApi.md#ListListIdGet) | **Get** /list/{listId} | Find list by ID
@@ -13,7 +15,7 @@ Method | HTTP request | Description
 
 
 # **ListGet**
-> InlineResponse2007 ListGet($apiKey)
+> InlineResponse2008 ListGet($apiKey)
 
 Get information about all lists
 
@@ -28,7 +30,69 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**InlineResponse2007**](inline_response_200_7.md)
+[**InlineResponse2008**](inline_response_200_8.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **ListListIdContactDelete**
+> ListListIdContactDelete($apiKey, $listId, $body)
+
+Remove a contact from a list
+
+
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **apiKey** | **string**|  | 
+ **listId** | **int64**| ID of list for which contact needs to be remove | 
+ **body** | [**ListContact**](ListContact.md)| Contact email and team id | 
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **ListListIdContactPost**
+> InlineResponse20015 ListListIdContactPost($apiKey, $listId, $body)
+
+Add a contact to a list
+
+
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **apiKey** | **string**|  | 
+ **listId** | **int64**| ID of list for which the contact needs to be added | 
+ **body** | [**ListContact**](ListContact.md)| Contact email and team id | 
+
+### Return type
+
+[**InlineResponse20015**](inline_response_200_15.md)
 
 ### Authorization
 
@@ -167,11 +231,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **ListPost**
-> InlineResponse2008 ListPost($apiKey, $body)
+> InlineResponse2009 ListPost($apiKey, $body)
 
 Add a new list
 
-
+Adding a new list with all the fields. List type can be 0 - Single OptIn 1 - Double OptIn
 
 
 ### Parameters
@@ -183,7 +247,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**InlineResponse2008**](inline_response_200_8.md)
+[**InlineResponse2009**](inline_response_200_9.md)
 
 ### Authorization
 
