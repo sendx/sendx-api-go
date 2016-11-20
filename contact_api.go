@@ -1,7 +1,7 @@
 /* 
- * SendX API
+ * SendX REST API
  *
- * SendX is built on the simple tenet that users must have open access to their data. SendX API is the first step in that direction. To cite some examples:   - subscribe / unsubscribe a contact from a list   - Schedule campaign to a segment of users   - Trigger transactional emails   - Get / PUT / POST and DELETE operations on team, campaign, list, contact, report etc. and so on.  As companies grow big, custom use cases around email marketing also crop up. SendX API ensures that SendX platform is able to satisfy such unforeseen use cases. They may range from building custom reporting dashboard to tagging contacts with custom attributes or triggering emails based on recommendation algorithm.  We do our best to have all our URLs be [RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer). Every endpoint (URL) may support one of four different http verbs. GET requests fetch information about an object, POST requests create objects, PUT requests update objects, and finally DELETE requests will delete objects.  Also all API calls besides:   - Subscribe / unsubscribe signup form required **api_key** to be passed as **header**   ### The Envelope Every response is contained by an envelope. That is, each response has a predictable set of keys with which you can expect to interact: ```json {     \"status\": \"200\",     \"message\": \"OK\",     \"data\"\": [        {          ...        },        .        .        .     ] } ```  #### Status The status key is used to communicate extra information about the response to the developer. If all goes well, you'll only ever see a code key with value 200. However, sometimes things go wrong, and in that case you might see a response like: ```json {     \"status\": \"404\" } ```  #### Data The data key is the meat of the response. It may be a list containing single object or multiple objects  #### Message This returns back human readable message. This is specially useful to make sense in case of error scenarios. 
+ * SendX REST API has two methods:    * Identify   * Track      ## Identify API Method      Identify API Method is used to attach data to a visitor. If a contact is not yet created then we will create the contact. In case contact already exists then we update it.      **Example Request:**       ```json       {         email: \"john.doe@gmail.com\",           firstName: \"John\",         lastName: \"Doe\",         birthday: \"1989-03-03\",         customFields: {            \"Designation\": \"Software Engineer\",           \"Age\": \"27\",            \"Experience\": \"5\"         },           tags: [\"Developer\", \"API Team\"],        }   ```         Note that tags are an array of strings. In case they don't exist previously then API will create them and associate them with the contact.      Similarly if a custom field doesn't exist then it is first created and then associated with the contact along-with the corresponding value. In case custom field exists already then we simply update the value of it for the aforementioned contact.      We don't delete any of the properties based on identify call. What this means is that if for the same contact you did two API calls like:         **API Call A**        ```json       {         email: \"john.doe@gmail.com\",          firstName: \"John\",         birthday: \"1989-03-03\",         customFields: {            \"Designation\": \"Software Engineer\"         },           tags: [\"Developer\"],        }   ```         **API Call B**       ```json       {           email: \"john.doe@gmail.com\",           customFields: {            \"Age\": \"29\"         },           tags: [\"API Team\"],        }   ```         Then the final contact will have firstName as **John**, birthday as **1989-03-03** present. Also both tags **Developer** and **API Team** shall be present along with custom fields **Designation** and **Age**.         **Properties:**      * **firstName**: type string   * **lastName**: type string   * **email**: type string     * **company**: type string     * **birthday**: type string with format **YYYY-MM-DD** eg: 2016-11-21     * **customFields**: type map[string]string      * **tags**: type array of string          **Response:**       ```json       {           \"status\": \"200\",         \"message\": \"OK\",         \"data\": {           \"encryptedTeamId\": \"CLdh9Ig5GLIN1u8gTRvoja\",           \"encryptedId\": \"c9QF63nrBenCaAXe660byz\",           \"tags\": [             \"API Team\",             \"Tech\"           ],           \"firstName\": \"John\",           \"lastName\": \"Doe\",           \"email\": \"john.doe@gmail.com\",           \"company\": \"\",           \"birthday\": \"1989-03-03\",           \"customFields\": {             \"Age\": \"29\",             \"Designation\": \"Software Engineer\"           }           }        }     ```         ## Track API Method         Track API Method is used to associate **tags** with a contact. You can have automation rules based on tag addition and they will get executed. For eg:      * **On user registration** tag start onboarding drip for him / her.   * **Account Upgrade** tag start add user to paid user list and start account expansion drip.       **Response:**       ```json       {         \"status\": \"200\",         \"message\": \"OK\",         \"data\": \"success\"      }   ``` 
  *
  * OpenAPI spec version: v1
  * 
@@ -24,19 +24,18 @@ package swagger
 
 import (
 	"net/url"
-	"encoding/json"
-	"fmt"
 	"strings"
+	"encoding/json"
 )
 
 type ContactApi struct {
-	Configuration Configuration
+	Configuration *Configuration
 }
 
 func NewContactApi() *ContactApi {
 	configuration := NewConfiguration()
 	return &ContactApi{
-		Configuration: *configuration,
+		Configuration: configuration,
 	}
 }
 
@@ -45,36 +44,36 @@ func NewContactApiWithBasePath(basePath string) *ContactApi {
 	configuration.BasePath = basePath
 
 	return &ContactApi{
-		Configuration: *configuration,
+		Configuration: configuration,
 	}
 }
 
 /**
- * Add a bulk of contacts in a request
+ * Identify a contact as user
  * 
  *
  * @param apiKey 
- * @param body All contacts which need to be added
- * @return void
+ * @param teamId 
+ * @param body Contact details
+ * @return *ContactResponse
  */
-func (a ContactApi) ContactBulkPost(apiKey string, body BulkContact) (*APIResponse, error) {
+func (a ContactApi) ContactIdentifyPost(apiKey string, teamId string, body Contact) (*ContactResponse, *APIResponse, error) {
 
-	var httpMethod = "Post"
+	var localVarHttpMethod = strings.ToUpper("Post")
 	// create path and map variables
-	path := a.Configuration.BasePath + "/contact/bulk"
+	localVarPath := a.Configuration.BasePath + "/contact/identify"
 
-
-	headerParams := make(map[string]string)
-	queryParams := url.Values{}
-	formParams := make(map[string]string)
-	var postBody interface{}
-	var fileName string
-	var fileBytes []byte
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := make(map[string]string)
+	var localVarPostBody interface{}
+	var localVarFileName string
+	var localVarFileBytes []byte
 	// add default headers if any
 	for key := range a.Configuration.DefaultHeader {
-		headerParams[key] = a.Configuration.DefaultHeader[key]
+		localVarHeaderParams[key] = a.Configuration.DefaultHeader[key]
 	}
-
+		localVarQueryParams.Add("teamId", a.Configuration.APIClient.ParameterToString(teamId, ""))
 
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{ "application/json",  }
@@ -82,62 +81,69 @@ func (a ContactApi) ContactBulkPost(apiKey string, body BulkContact) (*APIRespon
 	// set Content-Type header
 	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
 	if localVarHttpContentType != "" {
-		headerParams["Content-Type"] = localVarHttpContentType
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
 	}
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"application/json",
-	}
+		}
 
 	// set Accept header
 	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
-		headerParams["Accept"] = localVarHttpHeaderAccept
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
-
 	// header params "api_key"
-	headerParams["api_key"] = apiKey
-
+	localVarHeaderParams["api_key"] = a.Configuration.APIClient.ParameterToString(apiKey, "")
 	// body params
-	postBody = &body
+	localVarPostBody = &body
+	var successPayload = new(ContactResponse)
+	localVarHttpResponse, err := a.Configuration.APIClient.CallAPI(localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 
-
-	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
-	if err != nil {
-		return NewAPIResponse(httpResponse.RawResponse), err
+	var localVarURL, _ = url.Parse(localVarPath)
+	localVarURL.RawQuery = localVarQueryParams.Encode()
+	var localVarAPIResponse = &APIResponse{Operation: "ContactIdentifyPost", Method: localVarHttpMethod, RequestURL: localVarURL.String()}
+	if localVarHttpResponse != nil {
+		localVarAPIResponse.Response = localVarHttpResponse.RawResponse
+		localVarAPIResponse.Payload = localVarHttpResponse.Body()
 	}
 
-	return NewAPIResponse(httpResponse.RawResponse), err
+	if err != nil {
+		return successPayload, localVarAPIResponse, err
+	}
+	err = json.Unmarshal(localVarHttpResponse.Body(), &successPayload)
+	return successPayload, localVarAPIResponse, err
 }
 
 /**
- * Add Customfield data for a contact
+ * Add tracking info using tags to a contact
  * 
  *
  * @param apiKey 
- * @param contactId ID of contact that needs to be fetched
- * @param body Contact object that needs to be added
- * @return *InlineResponse2005
+ * @param teamId 
+ * @param contactId 
+ * @param tag 
+ * @return *TrackResponse
  */
-func (a ContactApi) ContactContactIdCustomfieldPost(apiKey string, contactId int64, body ContactCustomfield) (*InlineResponse2005, *APIResponse, error) {
+func (a ContactApi) ContactTrackPost(apiKey string, teamId string, contactId string, tag string) (*TrackResponse, *APIResponse, error) {
 
-	var httpMethod = "Post"
+	var localVarHttpMethod = strings.ToUpper("Post")
 	// create path and map variables
-	path := a.Configuration.BasePath + "/contact/{contactId}/customfield"
-	path = strings.Replace(path, "{"+"contactId"+"}", fmt.Sprintf("%v", contactId), -1)
+	localVarPath := a.Configuration.BasePath + "/contact/track"
 
-
-	headerParams := make(map[string]string)
-	queryParams := url.Values{}
-	formParams := make(map[string]string)
-	var postBody interface{}
-	var fileName string
-	var fileBytes []byte
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := make(map[string]string)
+	var localVarPostBody interface{}
+	var localVarFileName string
+	var localVarFileBytes []byte
 	// add default headers if any
 	for key := range a.Configuration.DefaultHeader {
-		headerParams[key] = a.Configuration.DefaultHeader[key]
+		localVarHeaderParams[key] = a.Configuration.DefaultHeader[key]
 	}
-
+		localVarQueryParams.Add("teamId", a.Configuration.APIClient.ParameterToString(teamId, ""))
+		localVarQueryParams.Add("contactId", a.Configuration.APIClient.ParameterToString(contactId, ""))
+		localVarQueryParams.Add("tag", a.Configuration.APIClient.ParameterToString(tag, ""))
 
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{ "application/json",  }
@@ -145,334 +151,35 @@ func (a ContactApi) ContactContactIdCustomfieldPost(apiKey string, contactId int
 	// set Content-Type header
 	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
 	if localVarHttpContentType != "" {
-		headerParams["Content-Type"] = localVarHttpContentType
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
 	}
 	// to determine the Accept header
 	localVarHttpHeaderAccepts := []string{
 		"application/json",
-	}
+		}
 
 	// set Accept header
 	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
-		headerParams["Accept"] = localVarHttpHeaderAccept
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
-
 	// header params "api_key"
-	headerParams["api_key"] = apiKey
+	localVarHeaderParams["api_key"] = a.Configuration.APIClient.ParameterToString(apiKey, "")
+	var successPayload = new(TrackResponse)
+	localVarHttpResponse, err := a.Configuration.APIClient.CallAPI(localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 
-	// body params
-	postBody = &body
+	var localVarURL, _ = url.Parse(localVarPath)
+	localVarURL.RawQuery = localVarQueryParams.Encode()
+	var localVarAPIResponse = &APIResponse{Operation: "ContactTrackPost", Method: localVarHttpMethod, RequestURL: localVarURL.String()}
+	if localVarHttpResponse != nil {
+		localVarAPIResponse.Response = localVarHttpResponse.RawResponse
+		localVarAPIResponse.Payload = localVarHttpResponse.Body()
+	}
 
-	var successPayload = new(InlineResponse2005)
-	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
 	if err != nil {
-		return successPayload, NewAPIResponse(httpResponse.RawResponse), err
+		return successPayload, localVarAPIResponse, err
 	}
-	err = json.Unmarshal(httpResponse.Body(), &successPayload)
-	return successPayload, NewAPIResponse(httpResponse.RawResponse), err
-}
-
-/**
- * Deletes a contact
- * 
- *
- * @param apiKey 
- * @param contactId Contact ID to delete
- * @return void
- */
-func (a ContactApi) ContactContactIdDelete(apiKey string, contactId int64) (*APIResponse, error) {
-
-	var httpMethod = "Delete"
-	// create path and map variables
-	path := a.Configuration.BasePath + "/contact/{contactId}"
-	path = strings.Replace(path, "{"+"contactId"+"}", fmt.Sprintf("%v", contactId), -1)
-
-
-	headerParams := make(map[string]string)
-	queryParams := url.Values{}
-	formParams := make(map[string]string)
-	var postBody interface{}
-	var fileName string
-	var fileBytes []byte
-	// add default headers if any
-	for key := range a.Configuration.DefaultHeader {
-		headerParams[key] = a.Configuration.DefaultHeader[key]
-	}
-
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
-
-	// set Content-Type header
-	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		headerParams["Content-Type"] = localVarHttpContentType
-	}
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{
-		"application/json",
-	}
-
-	// set Accept header
-	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		headerParams["Accept"] = localVarHttpHeaderAccept
-	}
-
-	// header params "api_key"
-	headerParams["api_key"] = apiKey
-
-
-	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
-	if err != nil {
-		return NewAPIResponse(httpResponse.RawResponse), err
-	}
-
-	return NewAPIResponse(httpResponse.RawResponse), err
-}
-
-/**
- * Find contact by ID
- * 
- *
- * @param apiKey 
- * @param contactId ID of contact that needs to be fetched
- * @return *Contact
- */
-func (a ContactApi) ContactContactIdGet(apiKey string, contactId int64) (*Contact, *APIResponse, error) {
-
-	var httpMethod = "Get"
-	// create path and map variables
-	path := a.Configuration.BasePath + "/contact/{contactId}"
-	path = strings.Replace(path, "{"+"contactId"+"}", fmt.Sprintf("%v", contactId), -1)
-
-
-	headerParams := make(map[string]string)
-	queryParams := url.Values{}
-	formParams := make(map[string]string)
-	var postBody interface{}
-	var fileName string
-	var fileBytes []byte
-	// add default headers if any
-	for key := range a.Configuration.DefaultHeader {
-		headerParams[key] = a.Configuration.DefaultHeader[key]
-	}
-
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
-
-	// set Content-Type header
-	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		headerParams["Content-Type"] = localVarHttpContentType
-	}
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{
-		"application/json",
-	}
-
-	// set Accept header
-	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		headerParams["Accept"] = localVarHttpHeaderAccept
-	}
-
-	// header params "api_key"
-	headerParams["api_key"] = apiKey
-
-	var successPayload = new(Contact)
-	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
-	if err != nil {
-		return successPayload, NewAPIResponse(httpResponse.RawResponse), err
-	}
-	err = json.Unmarshal(httpResponse.Body(), &successPayload)
-	return successPayload, NewAPIResponse(httpResponse.RawResponse), err
-}
-
-/**
- * Update a contact by ID
- * 
- *
- * @param apiKey 
- * @param contactId ID of contact that needs to be updated
- * @param body Contact object that needs to be added
- * @return *InlineResponse2002
- */
-func (a ContactApi) ContactContactIdPut(apiKey string, contactId int64, body ContactAddUpdate) (*InlineResponse2002, *APIResponse, error) {
-
-	var httpMethod = "Put"
-	// create path and map variables
-	path := a.Configuration.BasePath + "/contact/{contactId}"
-	path = strings.Replace(path, "{"+"contactId"+"}", fmt.Sprintf("%v", contactId), -1)
-
-
-	headerParams := make(map[string]string)
-	queryParams := url.Values{}
-	formParams := make(map[string]string)
-	var postBody interface{}
-	var fileName string
-	var fileBytes []byte
-	// add default headers if any
-	for key := range a.Configuration.DefaultHeader {
-		headerParams[key] = a.Configuration.DefaultHeader[key]
-	}
-
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
-
-	// set Content-Type header
-	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		headerParams["Content-Type"] = localVarHttpContentType
-	}
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{
-		"application/json",
-	}
-
-	// set Accept header
-	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		headerParams["Accept"] = localVarHttpHeaderAccept
-	}
-
-	// header params "api_key"
-	headerParams["api_key"] = apiKey
-
-	// body params
-	postBody = &body
-
-	var successPayload = new(InlineResponse2002)
-	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
-	if err != nil {
-		return successPayload, NewAPIResponse(httpResponse.RawResponse), err
-	}
-	err = json.Unmarshal(httpResponse.Body(), &successPayload)
-	return successPayload, NewAPIResponse(httpResponse.RawResponse), err
-}
-
-/**
- * Get information about all contacts
- * 
- *
- * @param apiKey 
- * @param limit Maximum number of contacts to be returned. Note that limit maximum value is 100 and default value is 10.
- * @param offset Offset from where we contacts should be retrieved. Default value is 0.
- * @return *InlineResponse2003
- */
-func (a ContactApi) ContactGet(apiKey string, limit int32, offset int32) (*InlineResponse2003, *APIResponse, error) {
-
-	var httpMethod = "Get"
-	// create path and map variables
-	path := a.Configuration.BasePath + "/contact"
-
-
-	headerParams := make(map[string]string)
-	queryParams := url.Values{}
-	formParams := make(map[string]string)
-	var postBody interface{}
-	var fileName string
-	var fileBytes []byte
-	// add default headers if any
-	for key := range a.Configuration.DefaultHeader {
-		headerParams[key] = a.Configuration.DefaultHeader[key]
-	}
-		queryParams.Add("limit", a.Configuration.APIClient.ParameterToString(limit, ""))
-			queryParams.Add("offset", a.Configuration.APIClient.ParameterToString(offset, ""))
-	
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
-
-	// set Content-Type header
-	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		headerParams["Content-Type"] = localVarHttpContentType
-	}
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{
-		"application/json",
-	}
-
-	// set Accept header
-	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		headerParams["Accept"] = localVarHttpHeaderAccept
-	}
-
-	// header params "api_key"
-	headerParams["api_key"] = apiKey
-
-	var successPayload = new(InlineResponse2003)
-	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
-	if err != nil {
-		return successPayload, NewAPIResponse(httpResponse.RawResponse), err
-	}
-	err = json.Unmarshal(httpResponse.Body(), &successPayload)
-	return successPayload, NewAPIResponse(httpResponse.RawResponse), err
-}
-
-/**
- * Add a new contact
- * 
- *
- * @param apiKey 
- * @param body Contact object that needs to be added
- * @return *InlineResponse2004
- */
-func (a ContactApi) ContactPost(apiKey string, body ContactAddUpdate) (*InlineResponse2004, *APIResponse, error) {
-
-	var httpMethod = "Post"
-	// create path and map variables
-	path := a.Configuration.BasePath + "/contact"
-
-
-	headerParams := make(map[string]string)
-	queryParams := url.Values{}
-	formParams := make(map[string]string)
-	var postBody interface{}
-	var fileName string
-	var fileBytes []byte
-	// add default headers if any
-	for key := range a.Configuration.DefaultHeader {
-		headerParams[key] = a.Configuration.DefaultHeader[key]
-	}
-
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{ "application/json",  }
-
-	// set Content-Type header
-	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		headerParams["Content-Type"] = localVarHttpContentType
-	}
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{
-		"application/json",
-	}
-
-	// set Accept header
-	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		headerParams["Accept"] = localVarHttpHeaderAccept
-	}
-
-	// header params "api_key"
-	headerParams["api_key"] = apiKey
-
-	// body params
-	postBody = &body
-
-	var successPayload = new(InlineResponse2004)
-	httpResponse, err := a.Configuration.APIClient.CallAPI(path, httpMethod, postBody, headerParams, queryParams, formParams, fileName, fileBytes)
-	if err != nil {
-		return successPayload, NewAPIResponse(httpResponse.RawResponse), err
-	}
-	err = json.Unmarshal(httpResponse.Body(), &successPayload)
-	return successPayload, NewAPIResponse(httpResponse.RawResponse), err
+	err = json.Unmarshal(localVarHttpResponse.Body(), &successPayload)
+	return successPayload, localVarAPIResponse, err
 }
 

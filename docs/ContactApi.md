@@ -4,19 +4,14 @@ All URIs are relative to *http://app.sendx.io/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**ContactBulkPost**](ContactApi.md#ContactBulkPost) | **Post** /contact/bulk | Add a bulk of contacts in a request
-[**ContactContactIdCustomfieldPost**](ContactApi.md#ContactContactIdCustomfieldPost) | **Post** /contact/{contactId}/customfield | Add Customfield data for a contact
-[**ContactContactIdDelete**](ContactApi.md#ContactContactIdDelete) | **Delete** /contact/{contactId} | Deletes a contact
-[**ContactContactIdGet**](ContactApi.md#ContactContactIdGet) | **Get** /contact/{contactId} | Find contact by ID
-[**ContactContactIdPut**](ContactApi.md#ContactContactIdPut) | **Put** /contact/{contactId} | Update a contact by ID
-[**ContactGet**](ContactApi.md#ContactGet) | **Get** /contact | Get information about all contacts
-[**ContactPost**](ContactApi.md#ContactPost) | **Post** /contact | Add a new contact
+[**ContactIdentifyPost**](ContactApi.md#ContactIdentifyPost) | **Post** /contact/identify | Identify a contact as user
+[**ContactTrackPost**](ContactApi.md#ContactTrackPost) | **Post** /contact/track | Add tracking info using tags to a contact
 
 
-# **ContactBulkPost**
-> ContactBulkPost($apiKey, $body)
+# **ContactIdentifyPost**
+> ContactResponse ContactIdentifyPost($apiKey, $teamId, $body)
 
-Add a bulk of contacts in a request
+Identify a contact as user
 
 
 
@@ -26,11 +21,12 @@ Add a bulk of contacts in a request
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **apiKey** | **string**|  | 
- **body** | [**BulkContact**](BulkContact.md)| All contacts which need to be added | 
+ **teamId** | **string**|  | 
+ **body** | [**Contact**](Contact.md)| Contact details | 
 
 ### Return type
 
-void (empty response body)
+[**ContactResponse**](ContactResponse.md)
 
 ### Authorization
 
@@ -43,41 +39,10 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **ContactContactIdCustomfieldPost**
-> InlineResponse2005 ContactContactIdCustomfieldPost($apiKey, $contactId, $body)
+# **ContactTrackPost**
+> TrackResponse ContactTrackPost($apiKey, $teamId, $contactId, $tag)
 
-Add Customfield data for a contact
-
-
-
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **apiKey** | **string**|  | 
- **contactId** | **int64**| ID of contact that needs to be fetched | 
- **body** | [**ContactCustomfield**](ContactCustomfield.md)| Contact object that needs to be added | 
-
-### Return type
-
-[**InlineResponse2005**](inline_response_200_5.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **ContactContactIdDelete**
-> ContactContactIdDelete($apiKey, $contactId)
-
-Deletes a contact
+Add tracking info using tags to a contact
 
 
 
@@ -87,133 +52,13 @@ Deletes a contact
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **apiKey** | **string**|  | 
- **contactId** | **int64**| Contact ID to delete | 
+ **teamId** | **string**|  | 
+ **contactId** | **string**|  | 
+ **tag** | **string**|  | 
 
 ### Return type
 
-void (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **ContactContactIdGet**
-> Contact ContactContactIdGet($apiKey, $contactId)
-
-Find contact by ID
-
-
-
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **apiKey** | **string**|  | 
- **contactId** | **int64**| ID of contact that needs to be fetched | 
-
-### Return type
-
-[**Contact**](Contact.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **ContactContactIdPut**
-> InlineResponse2002 ContactContactIdPut($apiKey, $contactId, $body)
-
-Update a contact by ID
-
-
-
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **apiKey** | **string**|  | 
- **contactId** | **int64**| ID of contact that needs to be updated | 
- **body** | [**ContactAddUpdate**](ContactAddUpdate.md)| Contact object that needs to be added | 
-
-### Return type
-
-[**InlineResponse2002**](inline_response_200_2.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **ContactGet**
-> InlineResponse2003 ContactGet($apiKey, $limit, $offset)
-
-Get information about all contacts
-
-
-
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **apiKey** | **string**|  | 
- **limit** | **int32**| Maximum number of contacts to be returned. Note that limit maximum value is 100 and default value is 10. | [optional] 
- **offset** | **int32**| Offset from where we contacts should be retrieved. Default value is 0. | [optional] 
-
-### Return type
-
-[**InlineResponse2003**](inline_response_200_3.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **ContactPost**
-> InlineResponse2004 ContactPost($apiKey, $body)
-
-Add a new contact
-
-
-
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **apiKey** | **string**|  | 
- **body** | [**ContactAddUpdate**](ContactAddUpdate.md)| Contact object that needs to be added | 
-
-### Return type
-
-[**InlineResponse2004**](inline_response_200_4.md)
+[**TrackResponse**](TrackResponse.md)
 
 ### Authorization
 
