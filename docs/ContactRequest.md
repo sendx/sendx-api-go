@@ -1,13 +1,11 @@
-# Contact
+# ContactRequest
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**EncryptedTeamId** | **string** |  | [optional] [default to null]
-**EncryptedId** | **string** |  | [optional] [default to null]
 **FirstName** | **string** |  | [optional] [default to null]
 **LastName** | **string** |  | [optional] [default to null]
-**Email** | **string** |  | [optional] [default to null]
+**Email** | **string** |  | [default to null]
 **Company** | **string** |  | [optional] [default to null]
 **Birthday** | **string** |  | [optional] [default to null]
 **Tags** | **[]string** |  | [optional] [default to null]

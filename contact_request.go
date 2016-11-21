@@ -22,9 +22,19 @@
 
 package swagger
 
-type TrackResponse struct {
+type ContactRequest struct {
 
-	Status string `json:"status,omitempty"`
+	FirstName string `json:"firstName,omitempty"`
 
-	Message string `json:"message,omitempty"`
+	LastName string `json:"lastName,omitempty"`
+
+	Email string `json:"email,omitempty"`
+
+	Company string `json:"company,omitempty"`
+
+	Birthday string `json:"birthday,omitempty"`
+
+	Tags []string `json:"tags,omitempty"`
+
+	CustomFields map[string]string `json:"customFields,omitempty"`
 }

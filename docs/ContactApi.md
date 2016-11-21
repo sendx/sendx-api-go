@@ -9,7 +9,7 @@ Method | HTTP request | Description
 
 
 # **ContactIdentifyPost**
-> ContactResponse ContactIdentifyPost($apiKey, $teamId, $body)
+> ContactResponse ContactIdentifyPost($apiKey, $teamId, $contactDetails)
 
 Identify a contact as user
 
@@ -22,7 +22,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **apiKey** | **string**|  | 
  **teamId** | **string**|  | 
- **body** | [**Contact**](Contact.md)| Contact details | 
+ **contactDetails** | [**ContactRequest**](ContactRequest.md)| Contact details | 
 
 ### Return type
 
@@ -40,7 +40,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **ContactTrackPost**
-> TrackResponse ContactTrackPost($apiKey, $teamId, $contactId, $tag)
+> TrackResponse ContactTrackPost($apiKey, $teamId, $email, $tag)
 
 Add tracking info using tags to a contact
 
@@ -53,7 +53,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **apiKey** | **string**|  | 
  **teamId** | **string**|  | 
- **contactId** | **string**|  | 
+ **email** | **string**|  | 
  **tag** | **string**|  | 
 
 ### Return type
