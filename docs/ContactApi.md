@@ -40,7 +40,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **ContactTrackPost**
-> TrackResponse ContactTrackPost($apiKey, $teamId, $email, $tag)
+> TrackResponse ContactTrackPost($apiKey, $teamId, $email, $trackDetails)
 
 Add tracking info using tags to a contact
 
@@ -54,7 +54,7 @@ Name | Type | Description  | Notes
  **apiKey** | **string**|  | 
  **teamId** | **string**|  | 
  **email** | **string**|  | 
- **tag** | **string**|  | 
+ **trackDetails** | [**TrackRequest**](TrackRequest.md)| Track Details | 
 
 ### Return type
 

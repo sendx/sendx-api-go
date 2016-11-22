@@ -22,9 +22,9 @@
 
 package swagger
 
-type TrackResponse struct {
+type TrackRequest struct {
 
-	Status string `json:"status,omitempty"`
+	AddTags []string `json:"addTags,omitempty"`
 
-	Message string `json:"message,omitempty"`
+	RemoveTags []string `json:"removeTags,omitempty"`
 }
